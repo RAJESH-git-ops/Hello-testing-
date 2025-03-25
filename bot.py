@@ -1,24 +1,30 @@
-import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.types import Message
+import requests
+import time
 
-# अपना बॉट टोकन डालें
+# अपना Telegram Bot Token और Chat ID डालें
 TOKEN = "7631472471:AAEBhuruWc4175Vm8Hyx8R7vUTjx3yO7lJk"
-ADMIN_ID = 5539061712  # अपना Telegram Chat ID डालें
+ADMIN_ID = "5539061712"
 
-# बॉट और डिस्पैचर सेट करें
-bot = Bot(token=TOKEN, parse_mode="HTML")
-dp = Dispatcher()
+# Telegram API URL
+URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
-@dp.message(commands=['start'])
-async def start_command(message: Message):
-    if message.chat.id == ADMIN_ID:
-        welcome_text = "<b><i>🚀 स्वागत है, महाराज! आपका बॉट एक्टिव हो गया। 🎉</i></b>"
-        await message.reply(welcome_text)  # ✅ Indentation सही किया गया
+# Welcome Message
+WELCOME_MESSAGE = "🚀 स्वागत है, महाराज! आपका बॉट एक्टिव हो गया। 🎉"
 
-async def main():
-    print("✅ बॉट स्टार्ट हो गया...")
-    await dp.start_polling(bot)
+def send_message(chat_id, text):
+    """बॉट से मैसेज भेजने का फ़ंक्शन"""
+    payload = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "HTML"
+    }
+    requests.post(URL, data=payload)
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# ✅ बॉट स्टार्ट होते ही Admin को मैसेज भेजेगा
+send_message(ADMIN_ID, WELCOME_MESSAGE)
+
+print("✅ बॉट GitHub Codespaces में स्टार्ट हो गया...")
+
+# बॉट को हमेशा चालू रखने के लिए Loop
+while True:
+    time.sleep(10)  # हर 10 सेकंड में बॉट एक्टिव रहेगा
